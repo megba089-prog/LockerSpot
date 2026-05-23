@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts already loaded via <link> in index.html ─── */
+
+/* ─── CSS Custom Properties (Design System) ─── */
+:root {
+  --bg:         #0A0C10;
+  --surface:    #12151C;
+  --surface-hi: #1C2030;
+  --border:     #252836;
+  --accent:     #F97316;
+  --accent-dk:  #C2560A;
+  --text-pri:   #F1F5F9;
+  --text-sub:   #94A3B8;
+  --text-mut:   #64748B;
+
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+/* ─── Base Reset & Defaults ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-pri);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar Styling ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ─── Selection ─── */
+::selection { background: var(--accent); color: #fff; }
+
+/* ─── Typography Scale ─── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: var(--text-pri);
+  margin: 0;
+}
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* ─── Utility Classes ─── */
+@layer components {
+
+  /* Section wrapper */
+  .section-pad {
+    @apply px-6 py-20 md:px-12 lg:px-20 xl:px-32;
+  }
+
+  /* Container max width */
+  .container-omr {
+    @apply max-w-7xl mx-auto w-full;
+  }
+
+  /* Accent line decoration */
+  .accent-line {
+    @apply block w-12 h-1 bg-accent mb-6;
+  }
+
+  /* Display heading */
+  .heading-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Overline label */
+  .label-overline {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* Primary Button */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 font-bold tracking-widest uppercase text-sm;
+    font-family: var(--font-display);
+    background: var(--accent);
+    color: #fff;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .btn-primary:hover {
+    background: var(--accent-dk);
+    transform: translateY(-1px);
+  }
+
+  /* Ghost Button */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 font-bold tracking-widest uppercase text-sm;
+    font-family: var(--font-display);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Card base */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  /* Noise texture overlay */
+  .noise-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid pattern bg */
+  .grid-bg {
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Gradient fade bottom */
+  .fade-bottom {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+}
+
+/* ─── Page transition animation ─── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: pageEnter 0.45s ease forwards;
+}
+
+/* ─── Stagger helpers ─── */
+.stagger-1 { animation-delay: 0.1s; opacity: 0; }
+.stagger-2 { animation-delay: 0.2s; opacity: 0; }
+.stagger-3 { animation-delay: 0.3s; opacity: 0; }
+.stagger-4 { animation-delay: 0.4s; opacity: 0; }
+.stagger-5 { animation-delay: 0.5s; opacity: 0; }
+
+/* ─── Horizontal rule ─── */
+.hr-accent {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  margin: 0;
+}
