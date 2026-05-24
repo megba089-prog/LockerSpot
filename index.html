@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="theme-color" content="#FFD700"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="LockerSpot"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="application-name" content="LockerSpot"/>
+    <meta name="description" content="Il locker intelligente di quartiere. Spedisci e ritira in 10 secondi."/>
+    <link rel="manifest" href="manifest.json"/>
+    <link rel="stylesheet" href="style.css"/>
+    <title>LockerSpot</title>
+</head>
+<body>
+
+<div id="lockScreen" class="hidden">
+  <div class="lk-icon">
+    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+  </div>
+  <div class="lk-title">⛔ Accesso Bloccato</div>
+  <div class="lk-msg">Rilevati troppi tentativi di accesso falliti.<br><br>Per motivi di sicurezza la sessione è stata interrotta. Contattare immediatamente l'assistenza tecnica di LockerSpot.</div>
+  <div class="lk-support">
+    <strong>🛡 Supporto Tecnico LockerSpot</strong>
+    📧 security@lockerspot.io<br>
+    📞 +39 02 1234 5678<br>
+    🕐 Disponibile 24/7
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="logo">
+      <img src="icon.png" alt="LockerSpot Logo" style="width: 40px; height: 40px; border-radius: 11px; object-fit: cover;">
+      <div>
+        <div class="logo-name">Locker<em>Spot</em></div>
+        <div class="logo-tag">Smart Locker Network · Bergamo</div>
+      </div>
+    </div>
+    <div class="status-pill"><div class="status-dot"></div>Online</div>
+  </header>
+
+  <div class="proto">🚧 Versione Prototipo Dimostrativo — v1.0.0-beta</div>
+
+  <div class="hero">
+    <div class="hero-h">Il tuo pacco,<br>sempre <em>a portata di mano.</em></div>
+    <div class="hero-sub">Deposita e ritira con un PIN sicuro in 10 secondi. Senza attese, senza code, senza stress.</div>
+    <div class="feat-row">
+      <div class="feat-card hl"><div class="fi">⚡</div><div class="fl">Zero Attese</div><div class="fs">Ritiro in 10 secondi</div></div>
+      <div class="feat-card"><div class="fi">📍</div><div class="fl">Vicino a Te</div><div class="fs">Nel tuo quartiere</div></div>
+      <div class="feat-card"><div class="fi">🔐</div><div class="fl">100% Sicuro</div><div class="fs">PIN criptato e tracciato</div></div>
+      <div class="feat-card"><div class="fi">🌱</div><div class="fl">Sostenibile</div><div class="fs">Zero emissioni extra</div></div>
+    </div>
+  </div>
+
+  <div class="div main-info-element"></div>
+
+  <div class="tab-wrap">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tC" onclick="switchTab('c')">
+        <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+        Corriere
+      </button>
+      <button class="tab-btn" id="tU" onclick="switchTab('u')">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Cliente
+      </button>
+    </div>
+  </div>
+
+  <div class="panel" id="pC">
+    <div class="p-title">📦 Deposita Pacco</div>
+    <div class="p-sub">Seleziona un vano libero e genera il PIN sicuro da inviare al destinatario.</div>
+    <div class="info-box">
+      <div class="info-row"><span class="ir-lbl">📍 Locker Attivo</span><span class="ir-val">LockerSpot #01 — Centro</span></div>
+      <div class="info-row"><span class="ir-lbl">🟢 Vani Disponibili</span><span class="ir-val" id="vaniVal">7 su 10</span></div>
+      <div class="info-row"><span class="ir-lbl">🕐 Aggiornato alle</span><span class="ir-val" id="upTime">—</span></div>
+    </div>
+    <div id="depBtn">
+      <button class="dep-btn" onclick="depositPackage()">Deposita Pacco</button>
+    </div>
+    <div id="depSuccess" class="hidden">
+      <div class="success-card">
+        <div class="sc-icon">✅</div>
+        <div class="sc-title">Pacco Depositato</div>
+        <div class="pin-box">
+          <div class="pin-lbl">PIN Univoco Generato</div>
+          <div class="pin-code" id="genPin">——</div>
+        </div>
+        <div class="comp-badge">📦 Vano <span id="genComp">#03</span> assegnato</div>
+      </div>
+      <button class="reset-btn" onclick="resetCourier()">＋ Nuovo Deposito</button>
+    </div>
+    <button class="back-home-btn" onclick="goHome()">🏠 Torna alla Home</button>
+  </div>
+
+  <div class="panel hidden" id="pU">
+    <div id="clientMain">
+      <div class="p-title">🔓 Ritira il tuo Pacco</div>
+      <div class="p-sub">Inserisci il PIN di 4 cifre per aprire il vano.</div>
+      <div class="pin-dots">
+        <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+      </div>
+      <div class="att-bar">
+        <div class="att-dot" id="ad0"></div><div class="att-dot" id="ad1"></div><div class="att-dot" id="ad2"></div>
+        <span class="att-lbl" id="attLbl">Tentativi rimasti: 3</span>
+      </div>
+      <div class="numpad">
+        <button class="nb" onclick="addD('1')">1</button><button class="nb" onclick="addD('2')">2</button><button class="nb" onclick="addD('3')">3</button>
+        <button class="nb" onclick="addD('4')">4</button><button class="nb" onclick="addD('5')">5</button><button class="nb" onclick="addD('6')">6</button>
+        <button class="nb" onclick="addD('7')">7</button><button class="nb" onclick="addD('8')">8</button><button class="nb" onclick="addD('9')">9</button>
+        <button class="nb empty"></button><button class="nb" onclick="addD('0')">0</button>
+        <button class="nb del" onclick="delD()">⌫</button>
+        <button class="nb confirm" onclick="confirmPin()">🔓 Conferma Ritiro</button>
+      </div>
+    </div>
+    <div id="clientOK" class="unlock-card hidden">
+      <div class="uc-icon">🎉</div>
+      <div class="uc-title">Vano Aperto!</div>
+      <div class="uc-sub">Il tuo pacco è pronto nel <strong id="cliComp">vano #03</strong>.</div>
+      <button class="reset-btn" onclick="resetClient()">🔄 Ritira un altro pacco</button>
+    </div>
+    <button class="back-home-btn" onclick="goHome()">🏠 Torna alla Home</button>
+  </div>
+
+  <div class="div main-info-element"></div>
+
+  <div class="map-sec main-info-element" id="mapSection">
+    <div class="sec-lbl">📍 Locker Più Vicino</div>
+    <div class="map-card">
+      <div class="map-vis">
+        <div class="road rh" style="top:38%;"></div><div class="road rv" style="left:32%;"></div>
+        <div class="marker" style="left:30%;top:24%;">
+          <div class="marker-pulse"></div><div class="marker-dot"></div>
+          <div class="marker-lbl">LockerSpot #01</div>
+        </div>
+      </div>
+      <div class="map-bar">
+        <div>
+          <div class="mb-name">LockerSpot #01 — Centro</div>
+          <div class="mb-addr">Via Tiraboschi 12, Bergamo BG</div>
+        </div>
+        <div class="mb-av"><div class="av-n">7</div><div class="av-l">vani liberi</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loc-list main-info-element" id="listSection">
+    <div class="sec-lbl">🗂 Tutti i Punti Ritiro</div>
+    <div class="loc-item">
+      <div class="loc-ava">📦</div>
+      <div class="loc-info"><div class="li-n">LockerSpot #01 — Centro</div><div class="li-m">Via Tiraboschi 12 · 0.2 km</div></div>
+      <div class="li-b">7 liberi</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="disc-title">⚖️ Disclaimer Legale</div>
+    <div class="disc-txt">LockerSpot è un prototipo dimostrativo. Sviluppatori e gestori non si assumono responsabilità per danni, smarrimenti o furti dei pacchi.</div>
+    <div class="foot-bot"><span class="foot-logo">LockerSpot™</span><span>© 2026</span></div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
