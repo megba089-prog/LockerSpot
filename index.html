@@ -1,169 +1,231 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="theme-color" content="#FFD700"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-    <meta name="apple-mobile-web-app-title" content="LockerSpot"/>
-    <meta name="mobile-web-app-capable" content="yes"/>
-    <meta name="application-name" content="LockerSpot"/>
-    <meta name="description" content="Il locker intelligente di quartiere. Spedisci e ritira in 10 secondi."/>
-    <link rel="manifest" href="manifest.json"/>
-    <link rel="stylesheet" href="style.css"/>
-    <title>LockerSpot</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#FF6B00"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="LockerSpot"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<title>LockerSpot</title>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
 <div id="lockScreen" class="hidden">
-  <div class="lk-icon">
-    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+  <div class="lk-ico"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
+  <div class="lk-t">ACCESSO BLOCCATO</div>
+  <div class="lk-m">Rilevati troppi tentativi di accesso falliti. Per motivi di sicurezza la sessione è stata interrotta. Contattare immediatamente l'assistenza tecnica di LockerSpot.</div>
+  <div class="lk-box"><strong>Supporto Tecnico LockerSpot</strong>security@lockerspot.io · +39 02 1234 5678 · 24/7</div>
+</div>
+
+<div id="authScreen">
+  <div class="auth-top">
+    <div class="auth-logo-ico"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 012 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM4 15.91l7 3.93V12.1L4 8.16v7.75zm9 3.93l7-3.93V8.16l-7 3.93v7.75z"/></svg></div>
+    <div class="auth-brand">Locker<em>Spot</em></div>
+    <div class="auth-sub">Il locker intelligente di quartiere</div>
   </div>
-  <div class="lk-title">⛔ Accesso Bloccato</div>
-  <div class="lk-msg">Rilevati troppi tentativi di accesso falliti.<br><br>Per motivi di sicurezza la sessione è stata interrotta. Contattare immediatamente l'assistenza tecnica di LockerSpot.</div>
-  <div class="lk-support">
-    <strong>🛡 Supporto Tecnico LockerSpot</strong>
-    📧 security@lockerspot.io<br>
-    📞 +39 02 1234 5678<br>
-    🕐 Disponibile 24/7
+  <div class="auth-body">
+    <div class="auth-tabs">
+      <button class="at-btn active" id="atLogin" onclick="authTab('login')">Accedi</button>
+      <button class="at-btn" id="atReg" onclick="authTab('reg')">Registrati</button>
+    </div>
+    <div id="authErr" class="auth-err hidden"></div>
+
+    <div id="loginForm">
+      <div class="form-group"><label>Email</label><input type="email" id="liEmail" placeholder="nome@email.com"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="liPass" placeholder="••••••••"/></div>
+      <button class="auth-btn" style="margin-top:8px" onclick="doLogin()">Accedi a LockerSpot</button>
+      <p style="text-align:center;font-size:12px;color:var(--mut);margin-top:14px;">Demo rapida: usa qualsiasi email e password</p>
+    </div>
+
+    <div id="regForm" class="hidden">
+      <div class="form-group"><label>Nome Completo</label><input type="text" id="rName" placeholder="Mario Rossi"/></div>
+      <div class="form-group"><label>Email</label><input type="email" id="rEmail" placeholder="nome@email.com"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="rPass" placeholder="Min. 6 caratteri"/></div>
+      <div class="form-group"><label>Sei un...</label></div>
+      <div class="role-sel">
+        <div class="role-card sel" id="roleC" onclick="selRole('cliente')">
+          <div class="ri">🧑</div><div class="rn">Cliente</div><div class="rd">Ritiro pacchi</div>
+        </div>
+        <div class="role-card" id="roleF" onclick="selRole('corriere')">
+          <div class="ri">🚚</div><div class="rn">Corriere</div><div class="rd">Deposito pacchi</div>
+        </div>
+      </div>
+      <button class="auth-btn" onclick="doRegister()">Crea Account</button>
+    </div>
   </div>
 </div>
 
-<div id="app">
+<div id="app" class="hidden">
   <header>
-    <div class="logo">
-      <img src="icon.png" alt="LockerSpot Logo" style="width: 40px; height: 40px; border-radius: 11px; object-fit: cover;">
-      <div>
-        <div class="logo-name">Locker<em>Spot</em></div>
-        <div class="logo-tag">Smart Locker Network · Bergamo</div>
-      </div>
+    <div class="hlogo">
+      <div class="hlogo-ico"><svg viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 012 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM4 15.91l7 3.93V12.1L4 8.16v7.75zm9 3.93l7-3.93V8.16l-7 3.93v7.75z"/></svg></div>
+      <div class="hlogo-name">Locker<em>Spot</em></div>
     </div>
-    <div class="status-pill"><div class="status-dot"></div>Online</div>
+    <div class="hright">
+      <div class="status-pill"><div class="sdot"></div>Online</div>
+      <button class="avatar-btn" id="avatarBtn" onclick="goTab('profile')">M</button>
+    </div>
   </header>
 
-  <div class="proto">🚧 Versione Prototipo Dimostrativo — v1.0.0-beta</div>
-
-  <div class="hero">
-    <div class="hero-h">Il tuo pacco,<br>sempre <em>a portata di mano.</em></div>
-    <div class="hero-sub">Deposita e ritira con un PIN sicuro in 10 secondi. Senza attese, senza code, senza stress.</div>
-    <div class="feat-row">
-      <div class="feat-card hl"><div class="fi">⚡</div><div class="fl">Zero Attese</div><div class="fs">Ritiro in 10 secondi</div></div>
-      <div class="feat-card"><div class="fi">📍</div><div class="fl">Vicino a Te</div><div class="fs">Nel tuo quartiere</div></div>
-      <div class="feat-card"><div class="fi">🔐</div><div class="fl">100% Sicuro</div><div class="fs">PIN criptato e tracciato</div></div>
-      <div class="feat-card"><div class="fi">🌱</div><div class="fl">Sostenibile</div><div class="fs">Zero emissioni extra</div></div>
+  <div id="pageHome" class="page">
+    <div class="page-inner">
+      <div class="hero">
+        <h1>Ciao <em id="heroName">!</em><br>Dove ritiri oggi?</h1>
+        <p>Deposita e ritira con un PIN sicuro in 10 secondi. Senza attese, senza code.</p>
+      </div>
+      <div class="feat-row">
+        <div class="fc hl"><div class="fc-i">⚡</div><div class="fc-t">Zero Attese</div><div class="fc-s">Ritiro in 10s</div></div>
+        <div class="fc"><div class="fc-i">📍</div><div class="fc-t">Vicino a Te</div><div class="fc-s">Nel tuo quartiere</div></div>
+        <div class="fc"><div class="fc-i">🔐</div><div class="fc-t">100% Sicuro</div><div class="fc-s">PIN criptato</div></div>
+        <div class="fc"><div class="fc-i">🌱</div><div class="fc-t">Sostenibile</div><div class="fc-s">Zero emissioni</div></div>
+      </div>
+      <div id="homeAction" style="padding:16px 16px 0;"></div>
+      <div class="sec-hdr">📍 Locker Vicini a Te</div>
+      <div class="loc-list" id="homeLockerList"></div>
+      <div class="disc">
+        <div class="disc-t">⚖️ Disclaimer Legale</div>
+        <div class="disc-txt">LockerSpot è una piattaforma in fase di prototipo dimostrativo. Gli sviluppatori, i creatori e i gestori della piattaforma non si assumono alcuna responsabilità legale o civile per eventuali danni, smarrimenti, furti dei pacchi, malfunzionamenti tecnici del software o qualsiasi uso improprio o non autorizzato del servizio.</div>
+        <div class="disc-bot"><strong>LockerSpot™</strong><span>© 2026 · v2.0.0-beta</span></div>
+      </div>
     </div>
   </div>
 
-  <div class="div main-info-element"></div>
+  <div id="pageMap" class="page hidden" style="display:none;">
+    <div id="map"></div>
+    <div class="map-panel" id="mapPanel">
+      <div class="map-sel-name" id="mpName">Seleziona un locker sulla mappa</div>
+      <div class="map-sel-addr" id="mpAddr">Tocca un pin per vedere i dettagli</div>
+      <div class="map-sel-row">
+        <div class="map-tag" id="mpTag">— vani</div>
+        <button class="map-nav-btn" id="mpBtn">Naviga 🧭</button>
+      </div>
+    </div>
+  </div>
 
-  <div class="tab-wrap">
-    <div class="tab-bar">
-      <button class="tab-btn active" id="tC" onclick="switchTab('c')">
-        <svg viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-        Corriere
+  <div id="pageAction" class="page hidden">
+    <div class="page-inner">
+      <div id="courierPanel" class="panel-wrap hidden">
+        <div class="ptitle">📦 Deposita Pacco</div>
+        <div class="psub">Seleziona un vano libero e genera il PIN sicuro da inviare al destinatario.</div>
+        <div class="info-box">
+          <div class="ir"><span class="ir-l">📍 Locker Attivo</span><span class="ir-v">LockerSpot #01 — Centro</span></div>
+          <div class="ir"><span class="ir-l">🟢 Vani Disponibili</span><span class="ir-v" id="vaniVal">7 su 10</span></div>
+          <div class="ir"><span class="ir-l">🕐 Aggiornato</span><span class="ir-v" id="upTime">Ora</span></div>
+        </div>
+        <div id="depBtn">
+          <button class="dep-btn" onclick="depositPackage()">
+            <svg viewBox="0 0 24 24"><path d="M19 3H4.99C3.88 3 3 3.9 3 5v14c0 1.1.88 2 2 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+            Deposita Pacco
+          </button>
+        </div>
+        <div id="depSuccess" class="hidden">
+          <div class="scard">
+            <div class="scard-i">✅</div>
+            <div class="scard-t">Pacco Depositato!</div>
+            <div class="scard-s">Invia il PIN al destinatario per sbloccare il vano.</div>
+            <div class="pin-box"><div class="pin-lbl">PIN Univoco Generato</div><div class="pin-code" id="genPin">——</div></div>
+            <div class="cbadge">📦 Vano <span id="genComp">#03</span> assegnato</div>
+          </div>
+          <button class="sec-btn" onclick="resetCourier()">＋ Nuovo Deposito</button>
+        </div>
+      </div>
+
+      <div id="clientPanel" class="panel-wrap hidden">
+        <div id="clientMain">
+          <div class="ptitle">🔓 Ritira il tuo Pacco</div>
+          <div class="psub">Inserisci il PIN di 4 cifre ricevuto per aprire il vano assegnato.</div>
+          <div class="pin-dots">
+            <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+            <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+          </div>
+          <div class="att-row">
+            <div class="ad" id="ad0"></div><div class="ad" id="ad1"></div><div class="ad" id="ad2"></div>
+            <span class="att-txt" id="attLbl">Tentativi rimasti: 3</span>
+          </div>
+          <div class="numpad">
+            <button class="nb" onclick="addD('1')">1</button>
+            <button class="nb" onclick="addD('2')">2<span class="sub">ABC</span></button>
+            <button class="nb" onclick="addD('3')">3<span class="sub">DEF</span></button>
+            <button class="nb" onclick="addD('4')">4<span class="sub">GHI</span></button>
+            <button class="nb" onclick="addD('5')">5<span class="sub">JKL</span></button>
+            <button class="nb" onclick="addD('6')">6<span class="sub">MNO</span></button>
+            <button class="nb" onclick="addD('7')">7<span class="sub">PQRS</span></button>
+            <button class="nb" onclick="addD('8')">8<span class="sub">TUV</span></button>
+            <button class="nb" onclick="addD('9')">9<span class="sub">WXYZ</span></button>
+            <button class="nb empty"></button>
+            <button class="nb" onclick="addD('0')">0</button>
+            <button class="nb del" onclick="delD()"><svg viewBox="0 0 24 24"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg></button>
+            <button class="nb confirm" onclick="confirmPin()">🔓 Conferma Ritiro</button>
+          </div>
+        </div>
+        <div id="clientOK" class="unlock-card hidden">
+          <div class="uk-i">🎉</div>
+          <div class="uk-t">Vano Aperto!</div>
+          <div class="uk-s">Il tuo pacco è pronto nel <strong id="cliComp">vano #03</strong>.<br>Ricorda di chiudere il vano dopo il ritiro. Grazie per aver scelto LockerSpot!</div>
+          <button class="sec-btn" onclick="resetClient()">🔄 Ritira un altro pacco</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pageChat" class="page hidden" style="display:none;">
+    <div id="convList" style="flex:1;overflow-y:auto;">
+      <div class="sec-hdr" style="padding-top:14px;">💬 Conversazioni</div>
+      <div class="conv-list" id="convListInner">
+        <div class="conv-item" onclick="openChat()">
+            <div class="conv-av">🚚</div>
+            <div class="conv-info">
+                <div class="conv-name">Supporto Corrieri</div>
+                <div class="conv-last">Come posso aiutarti?</div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div id="chatView" class="hidden" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="chat-hdr">
+        <button onclick="backToConvList()" style="background:none;border:none;color:var(--acc);font-size:22px;cursor:pointer;padding:0 8px 0 0;">‹</button>
+        <div class="chat-av" id="chatAvatar">🚚</div>
+        <div class="chat-info"><div class="chat-name" id="chatTitle">Corriere</div><div class="chat-status">● Online</div></div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input">
+        <input type="text" id="chatIn" placeholder="Scrivi un messaggio…" onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button class="send-btn" onclick="sendMsg()">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pageProfile" class="page hidden">
+      <div class="profile-hdr">
+          <div class="prof-av">🧑‍💻</div>
+          <div class="prof-name" id="profName">Nome</div>
+          <div class="prof-role" id="profRole">Ruolo</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Disconnetti Account</button>
+  </div>
+
+  <div class="nav">
+      <button class="nav-btn active" id="btnTabHome" onclick="goTab('home')">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
       </button>
-      <button class="tab-btn" id="tU" onclick="switchTab('u')">
-        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        Cliente
+      <button class="nav-btn" id="btnTabMap" onclick="goTab('map')">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Mappa
       </button>
-    </div>
+      <button class="nav-btn" id="btnTabAction" onclick="goTab('action')">
+          <svg viewBox="0 0 24 24"><path d="M19 3H4.99C3.88 3 3 3.9 3 5v14c0 1.1.88 2 2 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>Locker
+      </button>
+      <button class="nav-btn" id="btnTabChat" onclick="goTab('chat')">
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>Chat
+      </button>
   </div>
-
-  <div class="panel" id="pC">
-    <div class="p-title">📦 Deposita Pacco</div>
-    <div class="p-sub">Seleziona un vano libero e genera il PIN sicuro da inviare al destinatario.</div>
-    <div class="info-box">
-      <div class="info-row"><span class="ir-lbl">📍 Locker Attivo</span><span class="ir-val">LockerSpot #01 — Centro</span></div>
-      <div class="info-row"><span class="ir-lbl">🟢 Vani Disponibili</span><span class="ir-val" id="vaniVal">7 su 10</span></div>
-      <div class="info-row"><span class="ir-lbl">🕐 Aggiornato alle</span><span class="ir-val" id="upTime">—</span></div>
-    </div>
-    <div id="depBtn">
-      <button class="dep-btn" onclick="depositPackage()">Deposita Pacco</button>
-    </div>
-    <div id="depSuccess" class="hidden">
-      <div class="success-card">
-        <div class="sc-icon">✅</div>
-        <div class="sc-title">Pacco Depositato</div>
-        <div class="pin-box">
-          <div class="pin-lbl">PIN Univoco Generato</div>
-          <div class="pin-code" id="genPin">——</div>
-        </div>
-        <div class="comp-badge">📦 Vano <span id="genComp">#03</span> assegnato</div>
-      </div>
-      <button class="reset-btn" onclick="resetCourier()">＋ Nuovo Deposito</button>
-    </div>
-    <button class="back-home-btn" onclick="goHome()">🏠 Torna alla Home</button>
-  </div>
-
-  <div class="panel hidden" id="pU">
-    <div id="clientMain">
-      <div class="p-title">🔓 Ritira il tuo Pacco</div>
-      <div class="p-sub">Inserisci il PIN di 4 cifre per aprire il vano.</div>
-      <div class="pin-dots">
-        <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
-      </div>
-      <div class="att-bar">
-        <div class="att-dot" id="ad0"></div><div class="att-dot" id="ad1"></div><div class="att-dot" id="ad2"></div>
-        <span class="att-lbl" id="attLbl">Tentativi rimasti: 3</span>
-      </div>
-      <div class="numpad">
-        <button class="nb" onclick="addD('1')">1</button><button class="nb" onclick="addD('2')">2</button><button class="nb" onclick="addD('3')">3</button>
-        <button class="nb" onclick="addD('4')">4</button><button class="nb" onclick="addD('5')">5</button><button class="nb" onclick="addD('6')">6</button>
-        <button class="nb" onclick="addD('7')">7</button><button class="nb" onclick="addD('8')">8</button><button class="nb" onclick="addD('9')">9</button>
-        <button class="nb empty"></button><button class="nb" onclick="addD('0')">0</button>
-        <button class="nb del" onclick="delD()">⌫</button>
-        <button class="nb confirm" onclick="confirmPin()">🔓 Conferma Ritiro</button>
-      </div>
-    </div>
-    <div id="clientOK" class="unlock-card hidden">
-      <div class="uc-icon">🎉</div>
-      <div class="uc-title">Vano Aperto!</div>
-      <div class="uc-sub">Il tuo pacco è pronto nel <strong id="cliComp">vano #03</strong>.</div>
-      <button class="reset-btn" onclick="resetClient()">🔄 Ritira un altro pacco</button>
-    </div>
-    <button class="back-home-btn" onclick="goHome()">🏠 Torna alla Home</button>
-  </div>
-
-  <div class="div main-info-element"></div>
-
-  <div class="map-sec main-info-element" id="mapSection">
-    <div class="sec-lbl">📍 Locker Più Vicino</div>
-    <div class="map-card">
-      <div class="map-vis">
-        <div class="road rh" style="top:38%;"></div><div class="road rv" style="left:32%;"></div>
-        <div class="marker" style="left:30%;top:24%;">
-          <div class="marker-pulse"></div><div class="marker-dot"></div>
-          <div class="marker-lbl">LockerSpot #01</div>
-        </div>
-      </div>
-      <div class="map-bar">
-        <div>
-          <div class="mb-name">LockerSpot #01 — Centro</div>
-          <div class="mb-addr">Via Tiraboschi 12, Bergamo BG</div>
-        </div>
-        <div class="mb-av"><div class="av-n">7</div><div class="av-l">vani liberi</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="loc-list main-info-element" id="listSection">
-    <div class="sec-lbl">🗂 Tutti i Punti Ritiro</div>
-    <div class="loc-item">
-      <div class="loc-ava">📦</div>
-      <div class="loc-info"><div class="li-n">LockerSpot #01 — Centro</div><div class="li-m">Via Tiraboschi 12 · 0.2 km</div></div>
-      <div class="li-b">7 liberi</div>
-    </div>
-  </div>
-
-  <footer>
-    <div class="disc-title">⚖️ Disclaimer Legale</div>
-    <div class="disc-txt">LockerSpot è un prototipo dimostrativo. Sviluppatori e gestori non si assumono responsabilità per danni, smarrimenti o furti dei pacchi.</div>
-    <div class="foot-bot"><span class="foot-logo">LockerSpot™</span><span>© 2026</span></div>
-  </footer>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
 </body>
